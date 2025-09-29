@@ -1,5 +1,6 @@
 import express from 'express';
-import session from 'express-session';
+// Replace server memory sessions (bad on serverless) with cookie-based sessions
+import cookieSession from 'cookie-session';
 import helmet from 'helmet';
 import cors from 'cors';
 import dotenv from 'dotenv';
@@ -24,6 +25,9 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 3000;
 const isProd = process.env.NODE_ENV === 'production';
+
+// Behind Vercel proxies, trust X-Forwarded-* to set secure cookies etc.
+app.set('trust proxy', 1);
 
 // Security middleware
 app.use(helmet({
@@ -60,24 +64,23 @@ app.set('layout', 'layout');
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(express.json({ limit: '10mb' }));
 
-// Static files
-app.use(express.static(path.join(__dirname, '..', 'src', 'public'), {
+// Static files - mount under a stable /assets path for Vercel/serverless
+const publicDir = path.resolve(process.cwd(), 'src', 'public');
+app.use('/assets', express.static(publicDir, {
   maxAge: isProd ? '1y' : 0,
   etag: true
 }));
+// Back-compat: also serve /styles.css directly
+app.use('/styles.css', express.static(publicDir, { index: 'styles.css', maxAge: isProd ? '1y' : 0 }));
 
-// Session configuration
-app.use(session({
-  secret: process.env.SESSION_SECRET || 'development-secret-change-me',
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    secure: isProd,
-    httpOnly: true,
-    maxAge: 24 * 60 * 60 * 1000, // 24 hours
-    sameSite: 'lax'
-  },
-  name: 'jdp.sid' // Custom session name
+// Session configuration (cookie-based, compatible with serverless)
+app.use(cookieSession({
+  name: 'jdp.sid',
+  keys: [process.env.SESSION_SECRET || 'development-secret-change-me'],
+  maxAge: 24 * 60 * 60 * 1000, // 24 hours
+  sameSite: 'lax',
+  httpOnly: true,
+  secure: isProd
 }));
 
 // Health check endpoint

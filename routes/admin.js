@@ -1,7 +1,7 @@
 import express from 'express';
 import bcrypt from 'bcryptjs';
 import { db } from '../lib/database.js';
-import { presenceSchema, loginSchema, validateRequest } from '../lib/validation.js';
+import { presenceSchema, validateRequest } from '../lib/validation.js';
 import { requireAdmin, asyncHandler } from '../middleware/auth.js';
 import { loginLimiter } from '../middleware/rateLimiter.js';
 
@@ -25,9 +25,8 @@ router.get('/login', (req, res) => {
 // Process login
 router.post('/login', 
   loginLimiter,
-  validateRequest(loginSchema),
   asyncHandler(async (req, res) => {
-    const { password } = req.validatedData;
+    const { password } = req.body || {};
     const adminPassword = process.env.ADMIN_PASSWORD;
     const adminPasswordHash = process.env.ADMIN_PASSWORD_HASH;
 
@@ -47,7 +46,7 @@ router.post('/login',
       return res.redirect('/admin');
     }
 
-    res.render('admin/login', { 
+    res.status(401).render('admin/login', { 
       BRAND, 
       error: 'Mot de passe incorrect' 
     });
