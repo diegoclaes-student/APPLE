@@ -1,9 +1,37 @@
-<div class="card">
-  <h2>Admin – Connexion</h2>
-  <% if (error) { %><p style="color:#B23A48"><%= error %></p><% } %>
-  <form method="post">
-    <label>Mot de passe</label>
-    <input name="password" type="password" required>
-    <button class="btn" type="submit">Se connecter</button>
-  </form>
+<div class="admin-login-container">
+  <div class="admin-login-card">
+    <div class="admin-header">
+      <div class="admin-icon">🔐</div>
+      <h2>Administration</h2>
+      <p class="admin-subtitle">Accès réservé aux administrateurs</p>
+    </div>
+    
+    <% if (error) { %>
+      <div class="alert alert-danger">
+        <strong>❌ Erreur :</strong> <%= error %>
+      </div>
+    <% } %>
+    
+    <form method="post" class="admin-form">
+      <div class="form-group">
+        <label for="password">🔑 Mot de passe administrateur</label>
+        <input 
+          id="password" 
+          name="password" 
+          type="password" 
+          class="form-control" 
+          placeholder="Entrez votre mot de passe"
+          required
+          autocomplete="current-password"
+        >
+      </div>
+      <button class="btn btn-admin" type="submit">
+        <span>🚀 Se connecter</span>
+      </button>
+    </form>
+    
+    <div class="admin-footer">
+      <a href="/" class="back-link">← Retour au site</a>
+    </div>
+  </div>
 </div>

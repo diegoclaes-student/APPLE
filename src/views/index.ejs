@@ -1,34 +1,61 @@
 <% function timeHM(iso){ const d=new Date(iso);return (String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')); } %>
-<div class="card">
-  <form method="get">
-    <div class="grid">
-      <div>
-        <label for="date">Date</label>
-        <input type="date" id="date" name="date" value="<%= query.date %>">
-      </div>
-      <div>
-        <label for="lieu">Lieu</label>
-        <input type="text" id="lieu" name="lieu" placeholder="Filtrer par lieu" value="<%= query.lieu %>">
-      </div>
+<% function formatDate(dateStr) { 
+  const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+  return new Date(dateStr).toLocaleDateString('fr-FR', options);
+} %>
+
+<div class="calendar-header card">
+  <h2>📅 Calendrier des disponibilités</h2>
+  <p class="subtitle">Sélectionnez une date pour voir les créneaux disponibles</p>
+  
+  <form method="get" class="date-filter">
+    <div class="form-group">
+      <label for="date">Filtrer par date (optionnel)</label>
+      <input type="date" id="date" name="date" value="<%= query.date %>" class="form-control">
     </div>
-    <button class="btn" type="submit">Filtrer</button>
+    <button class="btn" type="submit">🔍 Filtrer</button>
+    <% if (query.date) { %>
+      <a href="/" class="btn btn-secondary">❌ Effacer filtre</a>
+    <% } %>
   </form>
 </div>
 
 <% if (Object.keys(grouped).length === 0) { %>
-  <div class="card">Aucun créneau disponible pour le moment.</div>
-<% } %>
-
-<% Object.keys(grouped).forEach(day => { %>
-  <div class="card">
-    <h2><%= day %></h2>
-    <% Object.keys(grouped[day]).forEach(loc => { %>
-      <h3><span class="badge">Lieu</span> <%= loc %></h3>
-      <div style="display:flex; flex-wrap:wrap; gap:8px;">
-        <% grouped[day][loc].forEach(s => { %>
-          <a class="btn" href="/reserve/<%= s.slot_id %>"><%= timeHM(s.start_at) %></a>
-        <% }) %>
+  <div class="card empty-state">
+    <div class="empty-icon">🗓️</div>
+    <h3>Aucun créneau disponible</h3>
+    <p>Il n'y a actuellement aucun créneau de réservation disponible.</p>
+    <p class="small-text">Revenez bientôt pour voir les nouvelles disponibilités !</p>
+  </div>
+<% } else { %>
+  <div class="calendar-grid">
+    <% Object.keys(grouped).sort().forEach(day => { %>
+      <div class="calendar-day-card">
+        <div class="day-header">
+          <h3 class="day-title"><%= formatDate(day) %></h3>
+          <div class="day-date"><%= day %></div>
+        </div>
+        
+        <div class="locations-container">
+          <% Object.keys(grouped[day]).forEach(loc => { %>
+            <div class="location-section">
+              <div class="location-header">
+                <span class="location-icon">📍</span>
+                <h4 class="location-name"><%= loc %></h4>
+              </div>
+              
+              <div class="time-slots">
+                <% grouped[day][loc].forEach(s => { %>
+                  <a class="time-slot-btn" href="/reserve/<%= s.slot_id %>">
+                    <span class="time-text"><%= timeHM(s.start_at) %></span>
+                    <span class="slot-indicator">●</span>
+                  </a>
+                <% }) %>
+              </div>
+            </div>
+          <% }) %>
+        </div>
       </div>
     <% }) %>
   </div>
-<% }) %>
+<% } %>
