@@ -16,7 +16,13 @@
   <% } else { %>
     <ul>
       <% presences.forEach(p => { %>
-        <li><b><%= p.date %></b> – <%= p.start_time %> à <%= p.end_time %> – <%= p.location %></li>
+        <li>
+          <b><%= p.date %></b> – <%= p.start_time %> à <%= p.end_time %> – <%= p.location %>
+          <form action="/admin/presences/delete" method="post" style="display:inline;margin-left:8px;">
+            <input type="hidden" name="id" value="<%= p.id %>">
+            <button class="btn btn-danger" onclick="return confirm('Supprimer cette présence ?');">Supprimer</button>
+          </form>
+        </li>
       <% }) %>
     </ul>
   <% } %>

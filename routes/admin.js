@@ -108,6 +108,19 @@ router.post('/presences/new',
   })
 );
 
+// Delete presence (and its slots) by id
+router.post('/presences/delete', requireAdmin, asyncHandler(async (req, res) => {
+  const { id } = req.body || {};
+  if (!id) return res.redirect('/admin?error=no-id');
+  try {
+    await db.deletePresenceById(Number(id));
+    res.redirect('/admin?success=presence-deleted');
+  } catch (error) {
+    console.error('Error deleting presence:', error);
+    res.redirect('/admin?error=delete-failed');
+  }
+}));
+
 // List all reservations
 router.get('/reservations', requireAdmin, asyncHandler(async (req, res) => {
   const { date, lieu } = req.query;
