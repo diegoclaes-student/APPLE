@@ -69,12 +69,24 @@ const nextYear = currentMonth === 11 ? currentYear + 1 : currentYear;
         <% if (daySlots && !isPast) { %>
           <div class="day-slots-preview">
             <% 
-            let totalSlots = 0;
+            let allTimes = [];
             Object.keys(daySlots).forEach(loc => {
-              totalSlots += daySlots[loc].length;
+              daySlots[loc].forEach(slot => {
+                const time = timeHM(slot.start_at);
+                if (allTimes.indexOf(time) === -1) allTimes.push(time);
+              });
             });
+            allTimes.sort();
+            
+            // Afficher les 3 premiers créneaux, puis "..."
+            const maxDisplay = 3;
             %>
-            <span class="slots-count"><%= totalSlots %> créneaux</span>
+            <% allTimes.slice(0, maxDisplay).forEach(time => { %>
+              <span class="slot-time"><%= time %></span>
+            <% }); %>
+            <% if (allTimes.length > maxDisplay) { %>
+              <div class="more-slots">+<%= allTimes.length - maxDisplay %></div>
+            <% } %>
           </div>
         <% } %>
       </div>

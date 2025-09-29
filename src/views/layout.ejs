@@ -704,9 +704,11 @@ table th {
 .day-header {
   text-align: center;
   font-weight: bold;
-  color: var(--primary-color);
+  color: white;
+  background-color: var(--primary-color);
   padding: 0.75rem 0;
   font-size: 0.9rem;
+  border-radius: 4px;
 }
 
 .calendar-grid-days {
@@ -761,12 +763,15 @@ table th {
 }
 
 .calendar-day.has-slots {
-  background-color: #f0f8f0;
-  border-color: var(--success-color);
+  background: linear-gradient(135deg, #e8f5e8, #f0f8f0);
+  border: 2px solid var(--success-color);
+  box-shadow: 0 2px 4px rgba(40, 167, 69, 0.2);
 }
 
 .calendar-day.has-slots:hover {
-  background-color: #e8f5e8;
+  background: linear-gradient(135deg, #d4edda, #e8f5e8);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3);
 }
 
 .calendar-day.selected {
@@ -782,19 +787,28 @@ table th {
 }
 
 .day-slots-preview {
-  position: absolute;
-  bottom: 0.25rem;
-  right: 0.25rem;
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   color: var(--success-color);
-  font-weight: bold;
+  font-weight: 500;
+  max-height: 50px;
+  overflow: hidden;
 }
 
-.slots-count {
+.slot-time {
+  display: inline-block;
   background: var(--success-color);
   color: white;
-  padding: 0.125rem 0.25rem;
-  border-radius: 10px;
+  padding: 0.1rem 0.3rem;
+  border-radius: 3px;
+  margin: 0.1rem;
+  font-size: 0.6rem;
+  line-height: 1;
+}
+
+.more-slots {
+  color: var(--success-color);
+  font-weight: bold;
+  font-size: 0.6rem;
 }
 
 /* Section créneaux sélectionnés */
