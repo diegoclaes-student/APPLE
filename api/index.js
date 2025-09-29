@@ -6,6 +6,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import fs from 'fs';
 import expressLayouts from 'express-ejs-layouts';
 
 // Import routes
@@ -65,13 +66,29 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(express.json({ limit: '10mb' }));
 
 // Static files - mount under a stable /assets path for Vercel/serverless
-const publicDir = path.resolve(process.cwd(), 'src', 'public');
+const publicDir = path.join(__dirname, '..', 'src', 'public');
 app.use('/assets', express.static(publicDir, {
   maxAge: isProd ? '1y' : 0,
   etag: true
 }));
 // Back-compat: also serve /styles.css directly
 app.use('/styles.css', express.static(publicDir, { index: 'styles.css', maxAge: isProd ? '1y' : 0 }));
+
+// Explicit file handler to avoid any routing edge cases on Vercel
+let stylesCache = '';
+try {
+  stylesCache = fs.readFileSync(path.join(publicDir, 'styles.css'), 'utf8');
+} catch {}
+app.get('/styles.css', (req, res) => {
+  res.type('text/css');
+  if (stylesCache) return res.status(200).send(stylesCache);
+  try {
+    const css = fs.readFileSync(path.join(publicDir, 'styles.css'), 'utf8');
+    return res.status(200).send(css);
+  } catch {
+    return res.status(200).send('/* styles.css fallback served from server */');
+  }
+});
 
 // Session configuration (cookie-based, compatible with serverless)
 app.use(cookieSession({

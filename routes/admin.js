@@ -113,7 +113,7 @@ router.post('/presences/delete', requireAdmin, asyncHandler(async (req, res) => 
   const { id } = req.body || {};
   if (!id) return res.redirect('/admin?error=no-id');
   try {
-    await db.deletePresenceById(Number(id));
+    await db.deletePresenceById(String(id));
     res.redirect('/admin?success=presence-deleted');
   } catch (error) {
     console.error('Error deleting presence:', error);
