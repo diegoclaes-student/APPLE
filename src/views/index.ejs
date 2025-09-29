@@ -1,61 +1,160 @@
-<% function timeHM(iso){ const d=new Date(iso);return (String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')); } %>
-<% function formatDate(dateStr) { 
+<% 
+function timeHM(iso){ 
+  const d = new Date(iso);
+  return (String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')); 
+} 
+
+function formatDate(dateStr) { 
   const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
   return new Date(dateStr).toLocaleDateString('fr-FR', options);
-} %>
+}
+
+// Générer le calendrier du mois
+const currentDate = new Date();
+const currentMonth = query.month ? parseInt(query.month) - 1 : currentDate.getMonth();
+const currentYear = query.year ? parseInt(query.year) : currentDate.getFullYear();
+
+const monthDate = new Date(currentYear, currentMonth, 1);
+const monthName = monthDate.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
+const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+const firstDayOfWeek = new Date(currentYear, currentMonth, 1).getDay();
+const startDay = firstDayOfWeek === 0 ? 6 : firstDayOfWeek - 1; // Lundi = 0
+
+// Navigation mois précédent/suivant
+const prevMonth = currentMonth === 0 ? 11 : currentMonth - 1;
+const prevYear = currentMonth === 0 ? currentYear - 1 : currentYear;
+const nextMonth = currentMonth === 11 ? 0 : currentMonth + 1;
+const nextYear = currentMonth === 11 ? currentYear + 1 : currentYear;
+%>
 
 <div class="calendar-header card">
-  <h2>📅 Calendrier des disponibilités</h2>
-  <p class="subtitle">Sélectionnez une date pour voir les créneaux disponibles</p>
-  
-  <form method="get" class="date-filter">
-    <div class="form-group">
-      <label for="date">Filtrer par date (optionnel)</label>
-      <input type="date" id="date" name="date" value="<%= query.date %>" class="form-control">
+  <div class="calendar-nav">
+    <h2>📅 Réservations - <%= monthName %></h2>
+    <div class="nav-buttons">
+      <a href="/?month=<%= prevMonth + 1 %>&year=<%= prevYear %>" class="btn btn-secondary">‹ <%= new Date(prevYear, prevMonth).toLocaleDateString('fr-FR', {month: 'short'}) %></a>
+      <a href="/?month=<%= nextMonth + 1 %>&year=<%= nextYear %>" class="btn btn-secondary"><%= new Date(nextYear, nextMonth).toLocaleDateString('fr-FR', {month: 'short'}) %> ›</a>
     </div>
-    <button class="btn" type="submit">🔍 Filtrer</button>
-    <% if (query.date) { %>
-      <a href="/" class="btn btn-secondary">❌ Effacer filtre</a>
-    <% } %>
-  </form>
+  </div>
+  <p class="subtitle">Cliquez sur une date pour voir les créneaux disponibles</p>
 </div>
 
-<% if (Object.keys(grouped).length === 0) { %>
-  <div class="card empty-state">
-    <div class="empty-icon">🗓️</div>
-    <h3>Aucun créneau disponible</h3>
-    <p>Il n'y a actuellement aucun créneau de réservation disponible.</p>
-    <p class="small-text">Revenez bientôt pour voir les nouvelles disponibilités !</p>
+<div class="calendar-container">
+  <div class="calendar-grid-header">
+    <div class="day-header">Lun</div>
+    <div class="day-header">Mar</div>
+    <div class="day-header">Mer</div>
+    <div class="day-header">Jeu</div>
+    <div class="day-header">Ven</div>
+    <div class="day-header">Sam</div>
+    <div class="day-header">Dim</div>
   </div>
-<% } else { %>
-  <div class="calendar-grid">
-    <% Object.keys(grouped).sort().forEach(day => { %>
-      <div class="calendar-day-card">
-        <div class="day-header">
-          <h3 class="day-title"><%= formatDate(day) %></h3>
-          <div class="day-date"><%= day %></div>
-        </div>
-        
-        <div class="locations-container">
-          <% Object.keys(grouped[day]).forEach(loc => { %>
-            <div class="location-section">
-              <div class="location-header">
-                <span class="location-icon">📍</span>
-                <h4 class="location-name"><%= loc %></h4>
-              </div>
-              
-              <div class="time-slots">
-                <% grouped[day][loc].forEach(s => { %>
-                  <a class="time-slot-btn" href="/reserve/<%= s.slot_id %>">
-                    <span class="time-text"><%= timeHM(s.start_at) %></span>
-                    <span class="slot-indicator">●</span>
-                  </a>
-                <% }) %>
-              </div>
-            </div>
-          <% }) %>
-        </div>
+  
+  <div class="calendar-grid-days">
+    <% 
+    // Cases vides pour aligner le premier jour
+    for (let i = 0; i < startDay; i++) { %>
+      <div class="calendar-day empty"></div>
+    <% } 
+    
+    // Jours du mois
+    for (let day = 1; day <= daysInMonth; day++) { 
+      const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+      const daySlots = Object.keys(grouped).includes(dateStr) ? grouped[dateStr] : null;
+      const isToday = dateStr === new Date().toISOString().slice(0, 10);
+      const isPast = new Date(dateStr) < new Date(new Date().setHours(0,0,0,0));
+    %>
+      <div class="calendar-day <%= isToday ? 'today' : '' %> <%= isPast ? 'past' : '' %> <%= daySlots ? 'has-slots' : '' %>" 
+           data-date="<%= dateStr %>">
+        <div class="day-number"><%= day %></div>
+        <% if (daySlots && !isPast) { %>
+          <div class="day-slots-preview">
+            <% 
+            let totalSlots = 0;
+            Object.keys(daySlots).forEach(loc => {
+              totalSlots += daySlots[loc].length;
+            });
+            %>
+            <span class="slots-count"><%= totalSlots %> créneaux</span>
+          </div>
+        <% } %>
       </div>
-    <% }) %>
+    <% } %>
   </div>
-<% } %>
+</div>
+
+<!-- Section créneaux pour date sélectionnée -->
+<div class="selected-date-slots" id="selectedDateSlots">
+  <div class="card">
+    <h3 id="selectedDateTitle">📅 Sélectionnez une date</h3>
+    <div id="selectedDateContent">
+      <p class="text-center" style="color: #666; font-style: italic;">Cliquez sur une date du calendrier pour voir les créneaux disponibles.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const slots = <%- groupedJson %>;
+  const calendarDays = document.querySelectorAll('.calendar-day[data-date]');
+  const selectedDateSlots = document.getElementById('selectedDateSlots');
+  const selectedDateTitle = document.getElementById('selectedDateTitle');
+  const selectedDateContent = document.getElementById('selectedDateContent');
+  
+  // Fonction pour formater la date en français
+  function formatDateFr(dateStr) {
+    const date = new Date(dateStr);
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    return date.toLocaleDateString('fr-FR', options);
+  }
+  
+  // Fonction pour formater l'heure
+  function formatTime(isoTime) {
+    const date = new Date(isoTime);
+    return date.getHours().toString().padStart(2, '0') + ':' + date.getMinutes().toString().padStart(2, '0');
+  }
+  
+  // Gérer le clic sur les jours du calendrier
+  calendarDays.forEach(day => {
+    day.addEventListener('click', function() {
+      const selectedDate = this.dataset.date;
+      const isPast = new Date(selectedDate) < new Date(new Date().setHours(0,0,0,0));
+      
+      if (isPast) return; // Ignorer les dates passées
+      
+      // Retirer la sélection précédente
+      calendarDays.forEach(d => d.classList.remove('selected'));
+      // Ajouter la sélection actuelle
+      this.classList.add('selected');
+      
+      // Afficher la section des créneaux
+      selectedDateSlots.classList.add('show');
+      selectedDateTitle.textContent = '📅 ' + formatDateFr(selectedDate);
+      
+      // Vérifier s'il y a des créneaux pour cette date
+      if (slots[selectedDate]) {
+        let html = '';
+        Object.keys(slots[selectedDate]).forEach(location => {
+          html += '<div class="location-section">';
+          html += '<div class="location-header">';
+          html += '<span class="location-icon">📍</span>';
+          html += '<h4 class="location-name">' + location + '</h4>';
+          html += '</div>';
+          html += '<div class="time-slots">';
+          
+          slots[selectedDate][location].forEach(slot => {
+            html += '<a href="/reserve/' + slot.slot_id + '" class="time-slot-btn">';
+            html += '<span class="time-text">🕐 ' + formatTime(slot.start_at) + '</span>';
+            html += '<span class="slot-indicator">➤</span>';
+            html += '</a>';
+          });
+          
+          html += '</div></div>';
+        });
+        selectedDateContent.innerHTML = html;
+      } else {
+        selectedDateContent.innerHTML = '<div class="empty-state"><div class="empty-icon">📅</div><h4>Aucun créneau disponible</h4><p>Désolé, aucun créneau n\'est disponible pour cette date.</p></div>';
+      }
+    });
+  });
+});
+</script>

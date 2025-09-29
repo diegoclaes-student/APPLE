@@ -17,7 +17,7 @@ const BRAND = {
 
 // Home page - list available slots
 router.get('/', asyncHandler(async (req, res) => {
-  const { date, lieu } = req.query;
+  const { date, lieu, month, year } = req.query;
   const slots = await db.listUpcomingSlots({ 
     dateFilter: date || null, 
     locationFilter: lieu || '' 
@@ -36,7 +36,8 @@ router.get('/', asyncHandler(async (req, res) => {
   res.render('index', { 
     BRAND, 
     grouped, 
-    query: { date: date || '', lieu: lieu || '' } 
+    groupedJson: JSON.stringify(grouped),
+    query: { date: date || '', lieu: lieu || '', month: month || '', year: year || '' } 
   });
 }));
 
