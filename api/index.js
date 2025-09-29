@@ -5,6 +5,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import expressLayouts from 'express-ejs-layouts';
 
 // Import routes
 import publicRoutes from '../routes/public.js';
@@ -51,6 +52,9 @@ app.use(generalLimiter);
 // View engine setup
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, '..', 'src', 'views'));
+// Use express-ejs-layouts to wrap views with `layout.ejs`
+app.use(expressLayouts);
+app.set('layout', 'layout');
 
 // Body parsing middleware
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
