@@ -1,0 +1,34 @@
+<% const d = new Date(slot.start_at); const hm = String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0'); %>
+<div class="card">
+  <h2>Réserver – <%= slot.date %> à <%= hm %> – <%= slot.location %></h2>
+  <form method="post">
+    <div class="grid">
+      <div>
+        <label>Prénom</label>
+        <input name="first_name" required>
+      </div>
+      <div>
+        <label>Nom</label>
+        <input name="last_name" required>
+      </div>
+    </div>
+    <label>Téléphone</label>
+    <input name="phone" required>
+
+    <label>Quantité (nombre de bouteilles)</label>
+    <input name="quantity" type="number" min="1" value="1" required>
+
+    <label>Commentaire (optionnel)</label>
+    <textarea name="comment" rows="3" placeholder="Ex: variétés, précisions..."></textarea>
+
+    <label>Email (pour recevoir la confirmation avec liens de modification/annulation)</label>
+    <input name="email" type="email" placeholder="exemple@mail.com">
+
+    <div style="margin:8px 0;">
+      <input type="checkbox" id="consent" required>
+      <label for="consent">J’accepte que mes données soient utilisées pour gérer cette réservation.</label>
+    </div>
+
+    <button class="btn" type="submit">Confirmer ma réservation</button>
+  </form>
+</div>

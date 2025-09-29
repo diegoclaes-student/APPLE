@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Réservation annulée - <%= BRAND.name %></title>
+    <link rel="stylesheet" href="/styles.css">
+    <style>
+        .cancellation-container {
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+            border: 1px solid #f5c6cb;
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem auto;
+            max-width: 600px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .cancellation-icon {
+            text-align: center;
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .cancellation-title {
+            color: #721c24;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .cancellation-message {
+            text-align: center;
+            color: #721c24;
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+        
+        .reservation-summary {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .summary-title {
+            color: #721c24;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        
+        .summary-details {
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        .actions {
+            text-align: center;
+            margin-top: 2rem;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            margin: 0.5rem;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background: <%= BRAND.primary %>;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: <%= BRAND.accent %>;
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+    </style>
+</head>
+<body>
+    <%- include('layout') %>
+    
+    <div class="container">
+        <div class="cancellation-container">
+            <div class="cancellation-icon">❌</div>
+            <h1 class="cancellation-title">Réservation annulée</h1>
+            
+            <p class="cancellation-message">
+                Votre réservation a été annulée avec succès. Vous pouvez toujours faire une nouvelle réservation si vous le souhaitez.
+            </p>
+            
+            <div class="reservation-summary">
+                <div class="summary-title">📋 Réservation annulée :</div>
+                <div class="summary-details">
+                    <strong>Lieu :</strong> <%= r.location %><br>
+                    <strong>Date :</strong> <%= r.date %><br>
+                    <strong>Heure :</strong> <%= new Date(r.start_at).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) %><br>
+                    <strong>Nom :</strong> <%= r.first_name %> <%= r.last_name %><br>
+                    <strong>Quantité :</strong> <%= r.quantity %>
+                </div>
+            </div>
+            
+            <div class="actions">
+                <a href="/" class="btn btn-primary">🏠 Retour à l'accueil</a>
+                <a href="/" class="btn btn-secondary">📅 Nouvelle réservation</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

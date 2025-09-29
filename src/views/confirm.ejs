@@ -1,0 +1,23 @@
+<% const d = new Date(reservation.start_at); const hm = String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0'); %>
+<div class="card">
+  <h2>Réservation confirmée</h2>
+  <p>Merci pour votre réservation !</p>
+  <ul>
+    <li><b>Lieu:</b> <%= reservation.location %></li>
+    <li><b>Date:</b> <%= reservation.date %></li>
+    <li><b>Heure:</b> <%= hm %></li>
+    <li><b>Nom:</b> <%= reservation.first_name %> <%= reservation.last_name %></li>
+    <li><b>Téléphone:</b> <%= reservation.phone %></li>
+    <li><b>Quantité:</b> <%= reservation.quantity %></li>
+    <% if (reservation.comment) { %><li><b>Commentaire:</b> <%= reservation.comment %></li><% } %>
+  </ul>
+
+  <p>
+    <a class="btn" href="/r/<%= token %>/edit">Modifier ma réservation</a>
+    <a class="btn secondary" href="/r/<%= token %>/cancel">Annuler ma réservation</a>
+  </p>
+
+  <% if (!emailSent) { %>
+    <p style="color:#555">Astuce: Ajoute ton email lors de la réservation pour recevoir les liens de modification/annulation.</p>
+  <% } %>
+</div>

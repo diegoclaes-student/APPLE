@@ -1,0 +1,25 @@
+<div class="card">
+  <h2>Ajouter une présence</h2>
+  <% if (error) { %><p style="color:#B23A48"><%= error %></p><% } %>
+  <form method="post">
+    <label>Lieu (texte libre)</label>
+    <input name="location" required placeholder="Ex: Marché d’Ecaussinnes">
+
+    <div class="grid">
+      <div>
+        <label>Date</label>
+        <input name="date" type="date" required>
+      </div>
+      <div>
+        <label>Heure de début</label>
+        <input name="start_time" type="time" required>
+      </div>
+      <div>
+        <label>Heure de fin</label>
+        <input name="end_time" type="time" required>
+      </div>
+    </div>
+
+    <button class="btn" type="submit">Enregistrer (créneaux de 15 min)</button>
+  </form>
+</div>

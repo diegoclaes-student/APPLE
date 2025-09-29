@@ -1,0 +1,26 @@
+<% const d = new Date(r.start_at); const hm = String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0'); %>
+<div class="card">
+  <h2>Modifier la réservation – <%= r.date %> <%= hm %> – <%= r.location %></h2>
+  <form method="post">
+    <div class="grid">
+      <div>
+        <label>Prénom</label>
+        <input name="first_name" value="<%= r.first_name %>" required>
+      </div>
+      <div>
+        <label>Nom</label>
+        <input name="last_name" value="<%= r.last_name %>" required>
+      </div>
+    </div>
+    <label>Téléphone</label>
+    <input name="phone" value="<%= r.phone %>" required>
+
+    <label>Quantité</label>
+    <input name="quantity" type="number" min="1" value="<%= r.quantity %>" required>
+
+    <label>Commentaire (optionnel)</label>
+    <textarea name="comment" rows="3"><%= r.comment || "" %></textarea>
+
+    <button class="btn" type="submit">Enregistrer les modifications</button>
+  </form>
+</div>

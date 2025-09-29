@@ -1,0 +1,34 @@
+<% function timeHM(iso){ const d=new Date(iso);return (String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')); } %>
+<div class="card">
+  <form method="get">
+    <div class="grid">
+      <div>
+        <label for="date">Date</label>
+        <input type="date" id="date" name="date" value="<%= query.date %>">
+      </div>
+      <div>
+        <label for="lieu">Lieu</label>
+        <input type="text" id="lieu" name="lieu" placeholder="Filtrer par lieu" value="<%= query.lieu %>">
+      </div>
+    </div>
+    <button class="btn" type="submit">Filtrer</button>
+  </form>
+</div>
+
+<% if (Object.keys(grouped).length === 0) { %>
+  <div class="card">Aucun créneau disponible pour le moment.</div>
+<% } %>
+
+<% Object.keys(grouped).forEach(day => { %>
+  <div class="card">
+    <h2><%= day %></h2>
+    <% Object.keys(grouped[day]).forEach(loc => { %>
+      <h3><span class="badge">Lieu</span> <%= loc %></h3>
+      <div style="display:flex; flex-wrap:wrap; gap:8px;">
+        <% grouped[day][loc].forEach(s => { %>
+          <a class="btn" href="/reserve/<%= s.slot_id %>"><%= timeHM(s.start_at) %></a>
+        <% }) %>
+      </div>
+    <% }) %>
+  </div>
+<% }) %>

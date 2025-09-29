@@ -1,0 +1,14 @@
+<% const d = new Date(r.start_at); const hm = String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0'); %>
+<div class="card">
+  <h2>Annuler la réservation</h2>
+  <p>Confirmer l’annulation de votre réservation ?</p>
+  <ul>
+    <li><b>Date:</b> <%= r.date %> <%= hm %></li>
+    <li><b>Lieu:</b> <%= r.location %></li>
+    <li><b>Nom:</b> <%= r.first_name %> <%= r.last_name %></li>
+    <li><b>Quantité:</b> <%= r.quantity %></li>
+  </ul>
+  <form method="post">
+    <button class="btn secondary" type="submit">Confirmer l’annulation</button>
+  </form>
+</div>

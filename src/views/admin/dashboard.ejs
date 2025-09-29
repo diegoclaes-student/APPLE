@@ -1,0 +1,36 @@
+<div class="card">
+  <h2>Tableau de bord</h2>
+  <form action="/admin/logout" method="post" style="float:right;margin-top:-40px;">
+    <button class="btn secondary">Se déconnecter</button>
+  </form>
+  <p>
+    <a class="btn" href="/admin/presences/new">Ajouter une présence</a>
+    <a class="btn secondary" href="/admin/reservations">Voir les réservations</a>
+  </p>
+</div>
+
+<div class="card">
+  <h3>Présences à venir</h3>
+  <% if (presences.length === 0) { %>
+    <p>Aucune présence déclarée.</p>
+  <% } else { %>
+    <ul>
+      <% presences.forEach(p => { %>
+        <li><b><%= p.date %></b> – <%= p.start_time %> à <%= p.end_time %> – <%= p.location %></li>
+      <% }) %>
+    </ul>
+  <% } %>
+</div>
+
+<div class="card">
+  <h3>Réservations aujourd’hui</h3>
+  <% if (todayReservations.length === 0) { %>
+    <p>Aucune réservation aujourd’hui.</p>
+  <% } else { %>
+    <ul>
+      <% todayReservations.forEach(r => { const d = new Date(r.start_at); const hm = String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0'); %>
+        <li><b><%= hm %></b> – <%= r.first_name %> <%= r.last_name %> – <%= r.quantity %> – <%= r.location %></li>
+      <% }) %>
+    </ul>
+  <% } %>
+</div>

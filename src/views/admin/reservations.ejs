@@ -1,0 +1,55 @@
+<div class="card">
+  <h2>Réservations</h2>
+  <form method="get" class="grid">
+    <div>
+      <label>Date</label>
+      <input type="date" name="date" value="<%= query.date %>">
+    </div>
+    <div>
+      <label>Lieu</label>
+      <input type="text" name="lieu" placeholder="Filtrer par lieu" value="<%= query.lieu %>">
+    </div>
+    <div>
+      <label>&nbsp;</label>
+      <button class="btn" type="submit">Filtrer</button>
+    </div>
+  </form>
+</div>
+
+<div class="card">
+  <% if (reservations.length === 0) { %>
+    <p>Aucune réservation trouvée.</p>
+  <% } else { %>
+    <table style="width:100%; border-collapse: collapse;">
+      <thead>
+        <tr>
+          <th style="text-align:left; border-bottom:1px solid #eee; padding:8px;">Date/Heure</th>
+          <th style="text-align:left; border-bottom:1px solid #eee; padding:8px;">Lieu</th>
+          <th style="text-align:left; border-bottom:1px solid #eee; padding:8px;">Nom</th>
+          <th style="text-align:left; border-bottom:1px solid #eee; padding:8px;">Téléphone</th>
+          <th style="text-align:left; border-bottom:1px solid #eee; padding:8px;">Qté</th>
+          <th style="text-align:left; border-bottom:1px solid #eee; padding:8px;">Commentaire</th>
+          <th style="text-align:left; border-bottom:1px solid #eee; padding:8px;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% reservations.forEach(r => { const d = new Date(r.start_at); const hm = String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0'); %>
+          <tr>
+            <td style="border-bottom:1px solid #f1f1f1; padding:8px;"><%= r.date %> <%= hm %></td>
+            <td style="border-bottom:1px solid #f1f1f1; padding:8px;"><%= r.location %></td>
+            <td style="border-bottom:1px solid #f1f1f1; padding:8px;"><%= r.first_name %> <%= r.last_name %></td>
+            <td style="border-bottom:1px solid #f1f1f1; padding:8px;"><%= r.phone %></td>
+            <td style="border-bottom:1px solid #f1f1f1; padding:8px;"><%= r.quantity %></td>
+            <td style="border-bottom:1px solid #f1f1f1; padding:8px;"><%= r.comment || "" %></td>
+            <td style="border-bottom:1px solid #f1f1f1; padding:8px;">
+              <form method="post" action="/admin/reservations/delete" onsubmit="return confirm('Supprimer cette réservation ?')">
+                <input type="hidden" name="token" value="<%= r.token %>">
+                <button class="btn secondary">Supprimer</button>
+              </form>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  <% } %>
+</div>

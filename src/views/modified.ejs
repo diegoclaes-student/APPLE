@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Réservation modifiée - <%= BRAND.name %></title>
+    <link rel="stylesheet" href="/styles.css">
+    <style>
+        .success-container {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            border: 1px solid #c3e6cb;
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem auto;
+            max-width: 600px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .success-icon {
+            text-align: center;
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .success-title {
+            color: #155724;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .reservation-details {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+        
+        .detail-label {
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .detail-value {
+            color: #666;
+            text-align: right;
+        }
+        
+        .actions {
+            text-align: center;
+            margin-top: 2rem;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            margin: 0.5rem;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background: <%= BRAND.primary %>;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: <%= BRAND.accent %>;
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+    </style>
+</head>
+<body>
+    <%- include('layout') %>
+    
+    <div class="container">
+        <div class="success-container">
+            <div class="success-icon">✅</div>
+            <h1 class="success-title">Réservation modifiée avec succès</h1>
+            
+            <div class="reservation-details">
+                <h3 style="color: <%= BRAND.primary %>; margin-bottom: 1rem;">📋 Détails mis à jour</h3>
+                
+                <div class="detail-row">
+                    <span class="detail-label">📍 Lieu :</span>
+                    <span class="detail-value"><%= r.location %></span>
+                </div>
+                
+                <div class="detail-row">
+                    <span class="detail-label">📅 Date :</span>
+                    <span class="detail-value"><%= r.date %></span>
+                </div>
+                
+                <div class="detail-row">
+                    <span class="detail-label">🕐 Heure :</span>
+                    <span class="detail-value"><%= new Date(r.start_at).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) %></span>
+                </div>
+                
+                <div class="detail-row">
+                    <span class="detail-label">👤 Nom :</span>
+                    <span class="detail-value"><%= r.first_name %> <%= r.last_name %></span>
+                </div>
+                
+                <div class="detail-row">
+                    <span class="detail-label">📞 Téléphone :</span>
+                    <span class="detail-value"><%= r.phone %></span>
+                </div>
+                
+                <div class="detail-row">
+                    <span class="detail-label">🔢 Quantité :</span>
+                    <span class="detail-value"><%= r.quantity %></span>
+                </div>
+                
+                <% if (r.comment) { %>
+                <div class="detail-row">
+                    <span class="detail-label">💬 Commentaire :</span>
+                    <span class="detail-value"><%= r.comment %></span>
+                </div>
+                <% } %>
+            </div>
+            
+            <div class="actions">
+                <a href="/" class="btn btn-primary">🏠 Retour à l'accueil</a>
+                <a href="/r/<%= r.token %>/cancel" class="btn btn-secondary">❌ Annuler la réservation</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
