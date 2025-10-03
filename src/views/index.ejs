@@ -9,6 +9,9 @@ function formatDate(dateStr) {
   return new Date(dateStr).toLocaleDateString('fr-FR', options);
 }
 
+// DEBUG: Afficher les données reçues
+console.log('📊 Template received grouped keys:', Object.keys(grouped));
+
 // Générer le calendrier du mois
 const currentDate = new Date();
 const currentMonth = query.month ? parseInt(query.month) - 1 : currentDate.getMonth();
@@ -62,6 +65,11 @@ const nextYear = currentMonth === 11 ? currentYear + 1 : currentYear;
       const daySlots = Object.keys(grouped).includes(dateStr) ? grouped[dateStr] : null;
       const isToday = dateStr === new Date().toISOString().slice(0, 10);
       const isPast = new Date(dateStr) < new Date(new Date().setHours(0,0,0,0));
+      
+      // DEBUG
+      if (daySlots) {
+        console.log(`✅ Day ${day} (${dateStr}) has slots!`);
+      }
     %>
       <div class="calendar-day <%= isToday ? 'today' : '' %> <%= isPast ? 'past' : '' %> <%= daySlots ? 'has-slots' : '' %>" 
            data-date="<%= dateStr %>">

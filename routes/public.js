@@ -23,6 +23,8 @@ router.get('/', asyncHandler(async (req, res) => {
     locationFilter: lieu || '' 
   });
 
+  console.log(`🏠 Homepage: Found ${slots.length} slots`);
+
   // Group by date -> location
   const grouped = {};
   for (const slot of slots) {
@@ -32,6 +34,8 @@ router.get('/', asyncHandler(async (req, res) => {
     grouped[day][location] = grouped[day][location] || [];
     grouped[day][location].push(slot);
   }
+
+  console.log(`📅 Dates in grouped:`, Object.keys(grouped));
 
   res.render('index', { 
     BRAND, 
