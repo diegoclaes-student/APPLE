@@ -77,24 +77,23 @@ const nextYear = currentMonth === 11 ? currentYear + 1 : currentYear;
         <% if (daySlots && !isPast) { %>
           <div class="day-slots-preview">
             <% 
-            let allTimes = [];
+            // Pour chaque lieu, afficher la tranche horaire complète
             Object.keys(daySlots).forEach(loc => {
-              daySlots[loc].forEach(slot => {
-                const time = timeHM(slot.start_at);
-                if (allTimes.indexOf(time) === -1) allTimes.push(time);
-              });
+              const slots = daySlots[loc];
+              if (slots.length > 0) {
+                // Trier par heure
+                slots.sort((a, b) => new Date(a.start_at) - new Date(b.start_at));
+                const firstTime = timeHM(slots[0].start_at);
+                const lastSlot = slots[slots.length - 1];
+                // Calculer l'heure de fin (dernier créneau + 15 minutes)
+                const lastDate = new Date(lastSlot.start_at);
+                lastDate.setMinutes(lastDate.getMinutes() + 15);
+                const lastTime = String(lastDate.getHours()).padStart(2,'0') + ':' + String(lastDate.getMinutes()).padStart(2,'0');
+                %>
+                <div class="time-range"><%= firstTime %>-<%= lastTime %></div>
+              <% } 
             });
-            allTimes.sort();
-            
-            // Afficher les 3 premiers créneaux, puis "..."
-            const maxDisplay = 3;
             %>
-            <% allTimes.slice(0, maxDisplay).forEach(time => { %>
-              <span class="slot-time"><%= time %></span>
-            <% }); %>
-            <% if (allTimes.length > maxDisplay) { %>
-              <div class="more-slots">+<%= allTimes.length - maxDisplay %></div>
-            <% } %>
           </div>
         <% } %>
       </div>

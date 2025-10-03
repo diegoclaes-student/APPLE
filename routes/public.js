@@ -47,7 +47,7 @@ router.get('/', asyncHandler(async (req, res) => {
 
 // Show reservation form for a specific slot
 router.get('/reserve/:slotId', asyncHandler(async (req, res) => {
-  const slot = await db.getSlotById(Number(req.params.slotId));
+  const slot = await db.getSlotById(req.params.slotId);
   if (!slot) {
     return res.status(404).render('error', {
       BRAND,
